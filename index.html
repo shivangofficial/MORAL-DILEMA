@@ -3,26 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interactive Moral Dilemma Simulator — Starter</title>
+  <title>Interactive Moral Dilemma Simulator — Live + Animated</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#ffb86b;--muted:#9aa4b2;--glass: rgba(255,255,255,0.04)}
+    :root{--bg:#071023;--card:#071826;--accent:#ffb86b;--muted:#9aa4b2;--glass: rgba(255,255,255,0.03)}
+    *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    body{background:linear-gradient(180deg,#071023 0%, #081427 50%);color:#e6eef8;display:flex;align-items:flex-start;justify-content:center;padding:36px}
+    body{background:radial-gradient(1200px 600px at 10% 10%, rgba(255,184,107,0.03), transparent), linear-gradient(180deg,#021021 0%, #071023 100%);color:#e6eef8;display:flex;align-items:flex-start;justify-content:center;padding:36px}
     .wrap{width:980px;max-width:96%;}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ff6b6b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#061428}
+
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px;opacity:0;transform:translateY(-8px);animation:fadeInUp .6s ease forwards}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#ff6b6b);display:flex;align-items:center;justify-content:center;font-weight:800;color:#061428;font-size:20px;box-shadow:0 8px 24px rgba(255,107,107,0.06);animation:logoPop 1.8s ease-in-out infinite}
     h1{margin:0;font-size:20px}
     p.lead{margin:0;color:var(--muted);font-size:13px}
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(2,6,23,0.6);}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(2,6,23,0.6);opacity:0;transform:translateY(6px);animation:fadeInUp .6s .15s ease forwards}
     .main{display:grid;grid-template-columns:1fr 320px;gap:18px}
 
     .dilemma-title{font-size:18px;margin:0 0 6px}
-    .dilemma-text{color:#dfe9f6;font-size:15px;margin:6px 0 14px;line-height:1.4}
+    .dilemma-text{color:#dfe9f6;font-size:15px;margin:6px 0 14px;line-height:1.5}
 
     .choices{display:flex;gap:12px}
-    button.choice{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-weight:600;cursor:pointer}
-    button.choice:hover{transform:translateY(-2px)}
+    button.choice{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-weight:700;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease, background .18s ease}
+    button.choice:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(2,6,23,0.6)}
     button.choice.selected{outline:3px solid rgba(255,184,107,0.12);background:linear-gradient(90deg, rgba(255,184,107,0.06), rgba(255,107,107,0.02))}
 
     .meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
@@ -30,7 +32,7 @@
 
     .right{width:100%;}
     .panel{margin-bottom:12px}
-    .explain{background:#071826;padding:12px;border-radius:10px;color:var(--muted);font-size:14px}
+    .explain{background:#071026;padding:12px;border-radius:10px;color:var(--muted);font-size:14px}
 
     .actions{display:flex;gap:8px;margin-top:12px}
     .btn{padding:10px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
@@ -38,8 +40,13 @@
     footer{margin-top:18px;color:var(--muted);font-size:13px}
 
     .stats{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:10px;border-radius:10px}
-    .bar{height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
-    .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff6b6b)}
+    .bar{height:12px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+    .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff6b6b);width:0%;transition:width .6s cubic-bezier(.2,.9,.2,1)}
+
+    .pulse{display:inline-block;transform-origin:center center}
+
+    @keyframes logoPop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
     @media (max-width:900px){.main{grid-template-columns:1fr}}  
   </style>
@@ -50,11 +57,11 @@
       <div class="logo">MD</div>
       <div>
         <h1>Interactive Moral Dilemma Simulator</h1>
-        <p class="lead">Choose, debate, and learn — with explanations, voting stats, and a random dilemma generator.</p>
+        <p class="lead">Choose, debate, and learn — now with subtle live animation.</p>
       </div>
     </header>
 
-    <div class="card main">
+    <div class="card main" id="mainCard">
       <section>
         <div id="dilemma" role="article">
           <h2 class="dilemma-title" id="title">Loading…</h2>
@@ -108,12 +115,12 @@
     </div>
 
     <footer>
-      <div class="card" style="padding:10px">Tip: Add dilemmas to the <code>dilemmas</code> array in the script. To host: push to GitHub repo and enable GitHub Pages on the main branch.</div>
+      <div class="card" style="padding:10px">Tip: Add dilemmas to the <code>dilemmas</code> array in the script. To host: push to a GitHub repo and enable GitHub Pages (main branch).</div>
     </footer>
   </div>
 
 <script>
-// Starter dataset: 10 dilemmas with structured fields
+// Fixed dataset: ensure no stray characters that break the JS
 const dilemmas = [
   {
     id: 'trolley',
@@ -143,7 +150,7 @@ const dilemmas = [
   },
   {
     id: 'hospital',
-    title: 'The Doctor's Dilemma',
+    title: 'The Doctor\'s Dilemma',
     text: 'A surgeon can save five patients needing different organs by harvesting the organs of one healthy person who walks in. Do you sacrifice the healthy person?',
     choices: [
       { id: 'a', text: 'Yes — save five lives.'},
@@ -191,7 +198,7 @@ const dilemmas = [
     author: 'Tech Ethics',
     tags: ['economics','transition','AI'],
     difficulty: 'Medium',
-    explanation: 'Consider distributive justice — who receives AI gains, and how to support displaced workers.'n
+    explanation: 'Consider distributive justice — who receives AI gains, and how to support displaced workers.'
   },
   {
     id: 'truth',
@@ -235,12 +242,11 @@ const dilemmas = [
 ];
 
 // Simple storage for votes (localStorage). Structure: votes = {dilemmaId: {a: num, b: num}}
-const STORAGE_KEY = 'md_votes_v1';
+const STORAGE_KEY = 'md_votes_v2';
 let votes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
 let current = null;
 
 function getRandom(){ return dilemmas[Math.floor(Math.random()*dilemmas.length)]; }
-
 function saveVotes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(votes)); }
 
 function render(d){
@@ -257,7 +263,10 @@ function render(d){
     btn.addEventListener('click',()=>{ selectChoice(c.id); });
     choices.appendChild(btn);
   });
-  updateStats();
+  // small entrance animation for choices
+  Array.from(document.querySelectorAll('.choice')).forEach((el,i)=>{ el.style.opacity=0; el.style.transform='translateY(8px)'; setTimeout(()=>{ el.style.transition='all .36s cubic-bezier(.2,.9,.2,1)'; el.style.opacity=1; el.style.transform='translateY(0)'; }, 80*i); });
+
+  updateStats(true);
   document.getElementById('explanation').textContent = d.explanation;
 }
 
@@ -271,19 +280,23 @@ function selectChoice(choiceId){
   updateStats();
 }
 
-function updateStats(){
+function updateStats(animate){
   const id = current.id; const st = votes[id]||{a:0,b:0};
   const total = (st.a||0)+(st.b||0);
-  const pctA = total? Math.round((st.a/total)*100):0;
+  const pctA = total? Math.round((st.a/total)*100):50;
   document.getElementById('percent').textContent = `${pctA}% — Choice A`;
-  document.getElementById('barfill').style.width = pctA + '%';
+  // animated fill
+  const bar = document.getElementById('barfill');
+  if(animate){ setTimeout(()=> bar.style.width = pctA + '%', 40); } else { bar.style.width = pctA + '%'; }
   document.getElementById('counts').textContent = `A: ${st.a||0} · B: ${st.b||0} · Total: ${total}`;
 }
 
 function showExplanation(){
-  // short primer with key terms
-  const expl = `${current.explanation}\n\nPhilosophical frames: utilitarianism (consequence-focused), deontology (duty-based), virtue ethics (character-based). Think about intention, outcome, rights, and fairness.`;
-  alert(expl);
+  const expl = `${current.explanation}
+
+Philosophical frames: utilitarianism (consequence-focused), deontology (duty-based), virtue ethics (character-based). Think about intention, outcome, rights, and fairness.`;
+  // small modal-like quick explanation
+  const old = document.getElementById('explanation'); old.textContent = expl; old.style.boxShadow='0 12px 36px rgba(2,6,23,0.6)';
 }
 
 function shareLink(){
@@ -296,17 +309,21 @@ function shareLink(){
 
 // Init
 (function(){
-  // pick from URL if present
-  const params = new URLSearchParams(location.search);
-  const did = params.get('d');
-  let chosen = dilemmas.find(x=>x.id===did) || getRandom();
-  render(chosen);
+  try{
+    const params = new URLSearchParams(location.search);
+    const did = params.get('d');
+    let chosen = dilemmas.find(x=>x.id===did) || getRandom();
+    render(chosen);
 
-  document.getElementById('randomBtn').addEventListener('click', ()=>{ render(getRandom()); });
-  document.getElementById('explainBtn').addEventListener('click', showExplanation);
-  document.getElementById('shareBtn').addEventListener('click', shareLink);
+    document.getElementById('randomBtn').addEventListener('click', ()=>{ render(getRandom()); });
+    document.getElementById('explainBtn').addEventListener('click', showExplanation);
+    document.getElementById('shareBtn').addEventListener('click', shareLink);
+
+    // subtle card glow on load
+    const main = document.getElementById('mainCard');
+    main.animate([{boxShadow:'0 6px 18px rgba(2,6,23,0.6)'},{boxShadow:'0 18px 56px rgba(255,107,107,0.06)'}], {duration:900, direction:'alternate'});
+  } catch(e){ console.error(e); alert('Initialization error — open console for details.'); }
 })();
-
 </script>
 </body>
 </html>

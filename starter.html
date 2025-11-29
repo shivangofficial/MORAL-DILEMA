@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive Moral Dilemma Simulator — Starter</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ffb86b;--muted:#9aa4b2;--glass: rgba(255,255,255,0.04)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#071023 0%, #081427 50%);color:#e6eef8;display:flex;align-items:flex-start;justify-content:center;padding:36px}
+    .wrap{width:980px;max-width:96%;}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ff6b6b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#061428}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(2,6,23,0.6);}
+    .main{display:grid;grid-template-columns:1fr 320px;gap:18px}
+
+    .dilemma-title{font-size:18px;margin:0 0 6px}
+    .dilemma-text{color:#dfe9f6;font-size:15px;margin:6px 0 14px;line-height:1.4}
+
+    .choices{display:flex;gap:12px}
+    button.choice{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-weight:600;cursor:pointer}
+    button.choice:hover{transform:translateY(-2px)}
+    button.choice.selected{outline:3px solid rgba(255,184,107,0.12);background:linear-gradient(90deg, rgba(255,184,107,0.06), rgba(255,107,107,0.02))}
+
+    .meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .chip{background:var(--glass);padding:8px 10px;border-radius:999px;font-size:13px;color:var(--muted)}
+
+    .right{width:100%;}
+    .panel{margin-bottom:12px}
+    .explain{background:#071826;padding:12px;border-radius:10px;color:var(--muted);font-size:14px}
+
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .btn{padding:10px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    .stats{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:10px;border-radius:10px}
+    .bar{height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+    .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff6b6b)}
+
+    @media (max-width:900px){.main{grid-template-columns:1fr}}  
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">MD</div>
+      <div>
+        <h1>Interactive Moral Dilemma Simulator</h1>
+        <p class="lead">Choose, debate, and learn — with explanations, voting stats, and a random dilemma generator.</p>
+      </div>
+    </header>
+
+    <div class="card main">
+      <section>
+        <div id="dilemma" role="article">
+          <h2 class="dilemma-title" id="title">Loading…</h2>
+          <div class="dilemma-text" id="text">Please wait</div>
+
+          <div class="choices" id="choices"></div>
+
+          <div class="meta">
+            <div class="chip" id="author">↳ Author: Classic</div>
+            <div class="chip" id="tags">Tags: ethics, trolley</div>
+            <div class="chip" id="time">Difficulty: Moderate</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="randomBtn">Random Dilemma</button>
+            <button class="btn" id="shareBtn">Share (link)</button>
+            <button class="btn" id="explainBtn">Show Explanation</button>
+          </div>
+
+        </div>
+
+        <div style="margin-top:12px;" class="panel stats" id="votestats" aria-live="polite">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span>Community votes</span><span id="percent">—</span></div>
+          <div class="bar" aria-hidden="true"><i id="barfill" style="width:0%"></i></div>
+          <div style="margin-top:8px;color:var(--muted);font-size:13px" id="counts">—</div>
+        </div>
+
+      </section>
+
+      <aside class="right">
+        <div class="panel card" style="margin-bottom:12px">
+          <strong>Explanation</strong>
+          <div class="explain" id="explanation">Click "Show Explanation" to read background: utilitarianism, deontology, and common counterarguments will be explained clearly and briefly.</div>
+        </div>
+
+        <div class="panel card">
+          <strong>How it works</strong>
+          <ol style="color:var(--muted);font-size:14px;line-height:1.45;margin:8px 0 0;padding-left:18px">
+            <li>Read the scenario.</li>
+            <li>Pick the choice you think is morally best.</li>
+            <li>See community split and a short philosophical explanation.</li>
+          </ol>
+        </div>
+
+        <div class="panel card" style="margin-top:12px">
+          <strong>Extras</strong>
+          <div style="color:var(--muted);font-size:13px;margin-top:8px">Your vote is stored locally. Use the Share button to create a link to the current dilemma. This is a starter template for GitHub Pages.</div>
+        </div>
+      </aside>
+
+    </div>
+
+    <footer>
+      <div class="card" style="padding:10px">Tip: Add dilemmas to the <code>dilemmas</code> array in the script. To host: push to GitHub repo and enable GitHub Pages on the main branch.</div>
+    </footer>
+  </div>
+
+<script>
+// Starter dataset: 10 dilemmas with structured fields
+const dilemmas = [
+  {
+    id: 'trolley',
+    title: 'The Classic Trolley',
+    text: 'A runaway trolley is heading toward five workers tied to the track. You can pull a lever to divert it onto a side track where a single worker is tied. Do you pull the lever?',
+    choices: [
+      { id: 'a', text: 'Pull the lever — sacrifice one to save five.'},
+      { id: 'b', text: 'Do nothing — do not intervene directly.'}
+    ],
+    author: 'Philosophy 101',
+    tags: ['utilitarianism','deontology','classic'],
+    difficulty: 'Easy',
+    explanation: 'This classic pits utilitarianism (maximise well-being) against deontological views (some actions are wrong regardless of outcome). Many respond by weighing intention vs outcome.'
+  },
+  {
+    id: 'fat-man',
+    title: 'The Fat Man Variant',
+    text: 'On a bridge above the tracks you can push a large man onto the tracks to stop the trolley and save five. Do you push him?',
+    choices: [
+      { id: 'a', text: 'Push him — sacrifice one to save five.'},
+      { id: 'b', text: 'Refuse — it is impermissible to use someone as a means.'}
+    ],
+    author: 'Footnote',
+    tags: ['personal','intention','utilitarianism'],
+    difficulty: 'Medium',
+    explanation: 'Many people accept pulling a lever but reject pushing a person. The difference raises questions about proximity, intention, and whether it is permissible to use a person as a means to an end.'
+  },
+  {
+    id: 'hospital',
+    title: 'The Doctor's Dilemma',
+    text: 'A surgeon can save five patients needing different organs by harvesting the organs of one healthy person who walks in. Do you sacrifice the healthy person?',
+    choices: [
+      { id: 'a', text: 'Yes — save five lives.'},
+      { id: 'b', text: 'No — killing is impermissible even for greater good.'}
+    ],
+    author: 'Bioethics',
+    tags: ['medical','consent','rights'],
+    difficulty: 'Hard',
+    explanation: 'The dilemma touches on consent, bodily autonomy, and the boundary between permitted harm and impermissible killing.'
+  },
+  {
+    id: 'lifeboat',
+    title: 'Lifeboat Allocation',
+    text: 'A lifeboat can hold 6 but 8 people are aboard. You are the captain and must choose who stays. Prioritize children, the sick, or random draw?',
+    choices: [
+      { id: 'a', text: 'Prioritize children and vulnerable.'},
+      { id: 'b', text: 'Random draw — fair but risky.'}
+    ],
+    author: 'Seafarer',
+    tags: ['justice','fairness','triage'],
+    difficulty: 'Medium',
+    explanation: 'Allocation problems ask whether fairness is best served by prioritising certain groups or by equal chance. Social roles and responsibilities matter.'
+  },
+  {
+    id: 'privacy',
+    title: 'Surveillance vs Safety',
+    text: 'Installing mass surveillance in a city reduces crime but invades privacy. Do you support it?',
+    choices: [
+      { id: 'a', text: 'Yes — security for most is priority.'},
+      { id: 'b', text: 'No — privacy and liberty are essential.'}
+    ],
+    author: 'Policy',
+    tags: ['privacy','security','liberty'],
+    difficulty: 'Medium',
+    explanation: 'This pits collective security against individual rights. Consider proportionality, oversight, and potential abuses.'
+  },
+  {
+    id: 'ai-job',
+    title: 'AI and Jobs',
+    text: 'An AI system can replace thousands of jobs but increase productivity and lower prices. Approve the rollout?',
+    choices: [
+      { id: 'a', text: 'Approve — society benefits overall.'},
+      { id: 'b', text: 'Reject — protect livelihoods and transition slowly.'}
+    ],
+    author: 'Tech Ethics',
+    tags: ['economics','transition','AI'],
+    difficulty: 'Medium',
+    explanation: 'Consider distributive justice — who receives AI gains, and how to support displaced workers.'n
+  },
+  {
+    id: 'truth',
+    title: 'The White Lie',
+    text: 'A friend asks if you like their new film idea. Telling a small lie would spare their feelings but give them poor guidance. Do you lie?',
+    choices: [
+      { id: 'a', text: 'Lie to protect feelings.'},
+      { id: 'b', text: 'Tell the truth kindly.'}
+    ],
+    author: 'Interpersonal',
+    tags: ['honesty','friendship','feedback'],
+    difficulty: 'Easy',
+    explanation: 'This is about honesty vs care. Virtue ethics emphasizes character — how would a good friend act?'
+  },
+  {
+    id: 'consent',
+    title: 'Consent and Harm',
+    text: 'Two competent adults consent to an action that causes harm to one (non-permanent). Should consent make it permissible?',
+    choices: [
+      { id: 'a', text: 'Yes — adults should decide for themselves.'},
+      { id: 'b', text: 'No — some harms cannot be consented to.'}
+    ],
+    author: 'Legal',
+    tags: ['consent','autonomy','harm'],
+    difficulty: 'Hard',
+    explanation: 'Many legal systems allow broad consent but restrict acts that cause significant harm. The debate centers on paternalism vs autonomy.'
+  },
+  {
+    id: 'memory',
+    title: 'Erase a Memory',
+    text: 'A technology can erase a traumatic memory but it is central to a victim\'s identity and learning. Should it be offered?',
+    choices: [
+      { id: 'a', text: 'Yes — relieve suffering.'},
+      { id: 'b', text: 'No — identity and learning matter.'}
+    ],
+    author: 'Neuroethics',
+    tags: ['identity','therapy','autonomy'],
+    difficulty: 'Hard',
+    explanation: 'This raises questions about authenticity, consent, and long-term psychological effects.'
+  }
+];
+
+// Simple storage for votes (localStorage). Structure: votes = {dilemmaId: {a: num, b: num}}
+const STORAGE_KEY = 'md_votes_v1';
+let votes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+let current = null;
+
+function getRandom(){ return dilemmas[Math.floor(Math.random()*dilemmas.length)]; }
+
+function saveVotes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(votes)); }
+
+function render(d){
+  current = d;
+  document.getElementById('title').textContent = d.title;
+  document.getElementById('text').textContent = d.text;
+  document.getElementById('author').textContent = '↳ Author: ' + d.author;
+  document.getElementById('tags').textContent = 'Tags: ' + d.tags.join(', ');
+  document.getElementById('time').textContent = 'Difficulty: ' + d.difficulty;
+
+  const choices = document.getElementById('choices'); choices.innerHTML='';
+  d.choices.forEach(c=>{
+    const btn = document.createElement('button'); btn.className='choice'; btn.innerText = c.text; btn.dataset.cid = c.id;
+    btn.addEventListener('click',()=>{ selectChoice(c.id); });
+    choices.appendChild(btn);
+  });
+  updateStats();
+  document.getElementById('explanation').textContent = d.explanation;
+}
+
+function selectChoice(choiceId){
+  // mark UI
+  document.querySelectorAll('.choice').forEach(b=>b.classList.toggle('selected', b.dataset.cid===choiceId));
+  // update votes
+  if(!votes[current.id]) votes[current.id] = {a:0,b:0};
+  votes[current.id][choiceId] = (votes[current.id][choiceId]||0) + 1;
+  saveVotes();
+  updateStats();
+}
+
+function updateStats(){
+  const id = current.id; const st = votes[id]||{a:0,b:0};
+  const total = (st.a||0)+(st.b||0);
+  const pctA = total? Math.round((st.a/total)*100):0;
+  document.getElementById('percent').textContent = `${pctA}% — Choice A`;
+  document.getElementById('barfill').style.width = pctA + '%';
+  document.getElementById('counts').textContent = `A: ${st.a||0} · B: ${st.b||0} · Total: ${total}`;
+}
+
+function showExplanation(){
+  // short primer with key terms
+  const expl = `${current.explanation}\n\nPhilosophical frames: utilitarianism (consequence-focused), deontology (duty-based), virtue ethics (character-based). Think about intention, outcome, rights, and fairness.`;
+  alert(expl);
+}
+
+function shareLink(){
+  const url = new URL(location.href);
+  url.searchParams.set('d', current.id);
+  navigator.clipboard.writeText(url.toString()).then(()=>{
+    alert('Link copied to clipboard — share it with friends.');
+  }).catch(()=>{ prompt('Copy this link', url.toString()); });
+}
+
+// Init
+(function(){
+  // pick from URL if present
+  const params = new URLSearchParams(location.search);
+  const did = params.get('d');
+  let chosen = dilemmas.find(x=>x.id===did) || getRandom();
+  render(chosen);
+
+  document.getElementById('randomBtn').addEventListener('click', ()=>{ render(getRandom()); });
+  document.getElementById('explainBtn').addEventListener('click', showExplanation);
+  document.getElementById('shareBtn').addEventListener('click', shareLink);
+})();
+
+</script>
+</body>
+</html>
